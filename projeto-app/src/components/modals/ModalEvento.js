@@ -9,17 +9,10 @@ class ModalEvento extends Component {
     constructor(props){
         super(props);
 
-        this.initialState  = {
-            id: "",
-            tema: "",
-            local: "",
-            qtdPessoas: "",
-            imagemUrl: "",
-            dataEvento: "",
-            telefone: "",
-            email: ""
+        this.state = {
+            evento      : props.evento || {}
         }
-      
+          
         if(props.evento){
             this.state = props.evento
         } else {
@@ -30,25 +23,41 @@ class ModalEvento extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        const prevEvento = this.props.evento || {};
+        const nextEvento = nextProps.evento || {};
+        if (prevEvento.objectId !== nextEvento.objectId) {
+          this.setState({ evento: nextEvento })
+        }
+    }
+
+    
+    close = () => {
+        this.setState({
+            person     : {},
+            salvando     : false,
+            serverError: null
+        });
+        this.props.onHide()
+    };
+
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.onFormSubmit(this.state);
-        this.setState(this.initialState);
-
+        const acao 
+        = this.props.evento
+          ? this.props.updateEvento
+          : this.props.saveEvento;
     }
 
     handleChange= (e)=> {  
-        this.setState({ [e.target.name]: e.target.value});  
+        this.setState({ evento: { ...this.state.evento, [e.target.name]: e.target.value } })
+        // this.setState({ [e.target.name]: e.target.value});  
     } 
 
     render(){
-
-        let tituloPagina; 
-        if(this.initialState.id) {
-            tituloPagina = <h2>Editar Evento</h2>
-        } else {
-            tituloPagina = <h2>Cadastrar Evento</h2>
-        }
+        const { show } = this.props;
+        const { evento, salvando } = this.state;
+        const isNew = !this.props.person;
 
         return( 
         <Modal
@@ -68,7 +77,7 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Tema</Form.Label>
-                        <Form.Control value={this.state.tema} name="tema" onChange={this.handleChange} placeholder="Tema" />
+                        <Form.Control value={evento.tema} name="tema" onChange={this.handleChange} placeholder="Tema" />
                     </Col>
                     <Col>
                         <Form.Label>Local</Form.Label>
@@ -80,11 +89,11 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Data e Hora</Form.Label>
-                        <Form.Control name="dataEvento" value={this.state.dataEvento}  onChange={this.handleChange} placeholder="Data" />
+                        <Form.Control name="dataEvento" value={evento.dataEvento}  onChange={this.handleChange} placeholder="Data" />
                     </Col>
                     <Col>
                         <Form.Label>Qtd Pessoas</Form.Label>
-                        <Form.Control name="qtdPessoas" value={this.state.qtdPessoas} onChange={this.handleChange} placeholder="Qtd Pessoas" />
+                        <Form.Control name="qtdPessoas" value={evento.qtdPessoas} onChange={this.handleChange} placeholder="Qtd Pessoas" />
                     </Col>
                 </Row>
             </Form.Group>
@@ -92,11 +101,11 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Imagem</Form.Label>
-                        <Form.Control type="file" name="imagemUrl" value={this.state.imagemUrl}  onChange={this.handleChange} placeholder="Data" />
+                        <Form.Control type="file" name="imagemUrl" value={evento.imagemUrl}  onChange={this.handleChange} placeholder="Data" />
                     </Col>
                     <Col>
                         <Form.Label>Telefone</Form.Label>
-                        <Form.Control name="telefone" value={this.state.telefone}  onChange={this.handleChange} placeholder="Telefone" />
+                        <Form.Control name="telefone" value={evento.telefone}  onChange={this.handleChange} placeholder="Telefone" />
                     </Col>
                 </Row>
             </Form.Group>
@@ -104,14 +113,15 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" name="email" value={this.state.email} onChange={this.handleChange} placeholder="Email" />
+                        <Form.Control type="email" name="email" value={evento.email} onChange={this.handleChange} placeholder="Email" />
                     </Col>
                 </Row>
             </Form.Group>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary">Fechar</Button>
-                <Button type="submit" variant="primary">Salvar</Button>
+                <Button variant="secondary" onClick={this.close}>Fechar</Button>
+                <Button type="submit" variant="primary" onClick={this.handleSubmit} disabled={salvando}>
+                    {salvando ? 'Salvando...' : 'Salvar'} Salvar</Button>
             </Modal.Footer>
             </Form>
           </Modal>)

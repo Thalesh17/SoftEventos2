@@ -32,14 +32,10 @@ export default class Evento extends Component {
     }
 
     editarEvento = (data) => {
-        console.log(data);
-        this.setState({acao: 'put', addModalShow: true, acao: 'Editar'});
-        
-        // console.log(id);
+        this.setState({acao: 'put', addModalShow: true, acao: 'Editar', evento: data});
     }
 
     onFormSubmit = (data) => {
-        console.log(data);
         if(this.state.acao == "post"){
 
             // const {tema, local, qtdPessoas, imagemUrl, dataEvento, telefone, email} = this.state;
