@@ -3,20 +3,20 @@ import { Table, Button, Label, Form, Input, FormControl } from "react-bootstrap"
 import NavBar from './../nav/NavBar';
 import ModalEvento from './../modals/ModalEvento';
 import api from './../../services/api';
-
-// const api = axios.create({
-//     baseURL: 'http://localhost:5000/api',
-// });
-
 export default class Evento extends Component {
     constructor(props){
         super(props);
 
         this.state = {
+            acao: 'post',
             addModalShow: false,
             acao: 'Cadastrar',
-            eventos: []
+            eventos: [],
+            evento: {},
+            error: null,
         }
+        
+        this.onFormSubmit = this.onFormSubmit.bind(this);
     }
 
     async componentDidMount(){
@@ -31,8 +31,39 @@ export default class Evento extends Component {
         this.setState({eventos});
     }
 
-    editarEvento = (id) => {
-        console.log(id);
+    editarEvento = (data) => {
+        console.log(data);
+        this.setState({acao: 'put', addModalShow: true, acao: 'Editar'});
+        
+        // console.log(id);
+    }
+
+    onFormSubmit = (data) => {
+        console.log(data);
+        if(this.state.acao == "post"){
+
+            // const {tema, local, qtdPessoas, imagemUrl, dataEvento, telefone, email} = this.state;
+            // await api.post(`/evento`, {Tema: tema, QtdPessoas: qtdPessoas, Local: local, ImagemUrl: imagemUrl, Telefone: telefone, Email: email, DataEvento: new Date()})
+            //     .then(res => {
+            //         if (res.status === 201) {
+            //             alert("Sucesso");
+            //         }else{
+            //             console.log("res", res.status);
+            //         }
+            //     })
+
+        }else if(this.state.acao == "put"){
+            // const {tema, local, qtdPessoas, imagemUrl, dataEvento, telefone, email} = this.state;
+            // await api.put(`/evento`, {Tema: tema, QtdPessoas: qtdPessoas, Local: local, ImagemUrl: imagemUrl, Telefone: telefone, Email: email, DataEvento: new Date()})
+            //     .then(res => {
+            //         if (res.status === 201) {
+            //             alert("Sucesso");
+            //         }else{
+            //             console.log("res", res.status);
+            //         }
+            //     })
+        }
+
     }
 
     deletarEvento = async (id) => {
@@ -85,10 +116,10 @@ export default class Evento extends Component {
                             <td>{evento.email}</td>    
                             <td>
                                 <div className="btn-group">
-                                    <Button className="btn btn-sm btn-success" onClick={this.editarEvento(evento.id)} tooltip="Editar">
+                                    <Button className="btn btn-sm btn-success" onClick={this.editarEvento(evento)} tooltip="Editar">
                                         <i className="fas fa-edit"></i>Editar
                                     </Button>
-                                    <Button className="btn btn-sm btn-danger" tooltip="Excluir">
+                                    <Button className="btn btn-sm btn-danger" onClick={this.deletarEvento(evento.id)} tooltip="Excluir">
                                         <i className="fas fa-eraser"></i>Excluir
                                     </Button>
                                 </div>
@@ -100,9 +131,11 @@ export default class Evento extends Component {
                 </tbody>
                 </Table>
                 <ModalEvento 
+                acao={this.state.acao}
+                onFormSubmit={this.onFormSubmit}
                 show={this.state.addModalShow}
                 onHide={addModalClose}
-                acao={this.state.acao}
+                evento={this.state.evento}            
                 />
             </div>
         )

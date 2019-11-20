@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import NavLink from 'react-bootstrap/NavLink';
 
 export default class Square extends React.Component {
+
     render() {
         return (
             <div>
@@ -18,7 +19,7 @@ export default class Square extends React.Component {
                     <Navbar.Text>
                     Logado com: Thales Henrique
                     </Navbar.Text>
-                    <Button variant="outline-success">Sair</Button>
+                    <Link variant="outline-success" to="/login"><Button variant="outline-success">Sair</Button></Link>
                 </Form>
             </Navbar.Collapse>
             </Navbar>
@@ -26,3 +27,4 @@ export default class Square extends React.Component {
         )
     }
 }
+

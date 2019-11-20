@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { Button, Modal, Form, Row, Col }  from "react-bootstrap";
 import axios from 'axios';
 import api from './../../services/api';
+import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 
 
 class ModalEvento extends Component {
     constructor(props){
         super(props);
 
-        this.state = {
+        this.initialState  = {
+            id: "",
             tema: "",
             local: "",
             qtdPessoas: "",
@@ -17,29 +19,37 @@ class ModalEvento extends Component {
             telefone: "",
             email: ""
         }
+      
+        if(props.evento){
+            this.state = props.evento
+        } else {
+            this.state = this.initialState;
+        }
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
-    salvarEvento = async (e) => {
+
+    handleSubmit = (e) => {
         e.preventDefault();
-        const {tema, local, qtdPessoas, imagemUrl, dataEvento, telefone, email} = this.state;
-        await api.post(`/evento`, {Tema: tema, QtdPessoas: qtdPessoas, Local: local, ImagemUrl: imagemUrl, Telefone: telefone, Email: email, DataEvento: new Date()})
-             .then(res => {
-                 if (res.status === 201) {
-                    alert("Sucesso");
-                 }else{
-                     console.log("res", res.status);
-                 }
-            })
+        this.props.onFormSubmit(this.state);
+        this.setState(this.initialState);
 
-        // const {data: evento} = await api.post('/eventos', { content: this.state});
-        // this.setState({ eventos: [ ...this.state.eventos]});
-    };
+    }
 
-    inserirStateNoForm= (e)=> {  
+    handleChange= (e)=> {  
         this.setState({ [e.target.name]: e.target.value});  
-        console.log(this.state);
     } 
 
     render(){
+
+        let tituloPagina; 
+        if(this.initialState.id) {
+            tituloPagina = <h2>Editar Evento</h2>
+        } else {
+            tituloPagina = <h2>Cadastrar Evento</h2>
+        }
+
         return( 
         <Modal
             {...this.props}
@@ -47,10 +57,10 @@ class ModalEvento extends Component {
             aria-labelledby="contained-modal-title-vcenter"
             centered
           >
-            <Form onSubmit={this.salvarEvento}>
+            <Form onSubmit={this.handleSubmit}>
             <Modal.Header closeButton>
               <Modal.Title id="contained-modal-title-vcenter">
-                {this.props.acao} Evento
+                    {tituloPagina}
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -58,11 +68,11 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Tema</Form.Label>
-                        <Form.Control name="tema" onChange={this.inserirStateNoForm} placeholder="Tema" />
+                        <Form.Control value={this.state.tema} name="tema" onChange={this.handleChange} placeholder="Tema" />
                     </Col>
                     <Col>
                         <Form.Label>Local</Form.Label>
-                        <Form.Control name="local" onChange={this.inserirStateNoForm} placeholder="Local" />
+                        <Form.Control name="local" onChange={this.handleChange} placeholder="Local" />
                     </Col>
                 </Row>
             </Form.Group>
@@ -70,11 +80,11 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Data e Hora</Form.Label>
-                        <Form.Control name="dataEvento" onChange={this.inserirStateNoForm} placeholder="Data" />
+                        <Form.Control name="dataEvento" value={this.state.dataEvento}  onChange={this.handleChange} placeholder="Data" />
                     </Col>
                     <Col>
                         <Form.Label>Qtd Pessoas</Form.Label>
-                        <Form.Control name="qtdPessoas" onChange={this.inserirStateNoForm} placeholder="Qtd Pessoas" />
+                        <Form.Control name="qtdPessoas" value={this.state.qtdPessoas} onChange={this.handleChange} placeholder="Qtd Pessoas" />
                     </Col>
                 </Row>
             </Form.Group>
@@ -82,11 +92,11 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Imagem</Form.Label>
-                        <Form.Control type="file" name="imagemUrl" onChange={this.inserirStateNoForm} placeholder="Data" />
+                        <Form.Control type="file" name="imagemUrl" value={this.state.imagemUrl}  onChange={this.handleChange} placeholder="Data" />
                     </Col>
                     <Col>
                         <Form.Label>Telefone</Form.Label>
-                        <Form.Control name="telefone" onChange={this.inserirStateNoForm} placeholder="Telefone" />
+                        <Form.Control name="telefone" value={this.state.telefone}  onChange={this.handleChange} placeholder="Telefone" />
                     </Col>
                 </Row>
             </Form.Group>
@@ -94,7 +104,7 @@ class ModalEvento extends Component {
                 <Row>
                     <Col>
                         <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" name="email" onChange={this.inserirStateNoForm} placeholder="Email" />
+                        <Form.Control type="email" name="email" value={this.state.email} onChange={this.handleChange} placeholder="Email" />
                     </Col>
                 </Row>
             </Form.Group>
