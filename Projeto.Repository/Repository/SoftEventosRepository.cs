@@ -93,7 +93,7 @@ namespace Projeto.Repository.Repository
 
             query = query.AsNoTracking()
                 .OrderByDescending(c => c.DataEvento)
-                .Where(c => c.EventoId.Equals(eventoId));
+                .Where(c => c.Id.Equals(eventoId));
 
             return await query.FirstOrDefaultAsync();
         }

@@ -17,7 +17,7 @@ export default class Square extends React.Component {
                 </Nav>
                 <Form inline>
                     <Navbar.Text>
-                    Logado com: Thales Henrique
+                    Logado com: {localStorage.getItem("user_login")}
                     </Navbar.Text>
                     <Link variant="outline-success" to="/login"><Button variant="outline-success">Sair</Button></Link>
                 </Form>

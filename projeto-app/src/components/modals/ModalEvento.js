@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import { Button, Modal, Form, Row, Col }  from "react-bootstrap";
-import axios from 'axios';
-import api from './../../services/api';
-import DateTimePicker from 'react-widgets/lib/DateTimePicker'
-
 
 class ModalEvento extends Component {
     constructor(props){

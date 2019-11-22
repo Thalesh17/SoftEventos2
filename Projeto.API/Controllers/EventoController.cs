@@ -137,7 +137,7 @@ namespace Projeto.API.Controllers
                 _repo.Update(evento);
 
                 if(await _repo.SaveChangesAsync()){
-                    return Created($"/api/evento/{evento.EventoId}", _mapper.Map<EventoDTO>(evento));
+                    return Created($"/api/evento/{evento.Id}", _mapper.Map<EventoDTO>(evento));
                 }
             }
             catch (System.Exception)

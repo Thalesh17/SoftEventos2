@@ -181,7 +181,7 @@ namespace Projeto.Repository.Migrations
 
             modelBuilder.Entity("Projeto.Domain.Models.Evento", b =>
                 {
-                    b.Property<int>("EventoId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DataEvento");
@@ -194,9 +194,11 @@ namespace Projeto.Repository.Migrations
 
                     b.Property<int>("QtdPessoas");
 
+                    b.Property<string>("Telefone");
+
                     b.Property<string>("Tema");
 
-                    b.HasKey("EventoId");
+                    b.HasKey("Id");
 
                     b.ToTable("Eventos");
                 });

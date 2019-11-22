@@ -3,8 +3,6 @@ import { Link, withRouter } from "react-router-dom";
 
 import Logo from '../../login.svg';
 import api from "../../services/api";
-import axios from 'axios';
-
 import { Form, Container } from "./styles";
 
 class Login extends Component {
@@ -25,8 +23,11 @@ class Login extends Component {
       this.setState({ error: "Preencha e-mail e senha para continuar!" });
     }
     try{
-      const response = await api.post("/user/login", { username, password }).then(res => {
-        this.props.history.push("/eventos");
+      const response = await api
+        .post("/User/Login", { username, password })
+        .then(res => {
+          localStorage.setItem("user_login", username)
+          this.props.history.push("/eventos");
       });
     }catch(err){
       this.setState({error:
@@ -53,7 +54,7 @@ class Login extends Component {
           />
           <button type="submit">Entrar</button>
           <hr />
-          <Link to="/signup">Criar conta grátis</Link>
+          <Link to="/register">Criar conta grátis</Link>
         </Form>
       </Container>
     );

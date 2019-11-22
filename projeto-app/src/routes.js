@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-
+import Login from './components/login/Login';
+import Evento from './components/eventos/Evento';
+import AddEvento from './components/eventos/AddEvento';
+import EditEvento from './components/eventos/EditEvento';
+import Register from './components/register/Register';
 import { isAuthenticated } from "./services/auth";
 
-import Login from "./components/login/Login";
-import Register from "./components/register/Register";
-import Evento from "./components/eventos/Evento";
-
-const PrivateRoute = ({ component: Component, ...rest }) => (
+const PrivateRoute = ({ componEventoent: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
@@ -23,14 +23,14 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 const Routes = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path="/register" component={Register} />
-      <Route path="/login" component={Login} />
-      <Route path="/eventos" component={Evento} />
-      <PrivateRoute path="/app" component={() => <h1>App</h1>} />
+      <Route exact path="/" component={() => <Login></Login>} />
+      <Route path="/register" component={() => <Register></Register>} />
+      <PrivateRoute path="/eventos" component={() => <Evento></Evento>} />
+      <PrivateRoute path="/add-evento" component={() => <AddEvento></AddEvento>} />
+      <PrivateRoute path="/edit-evento" component={() => <EditEvento></EditEvento>} />
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>
   </BrowserRouter>
 );
 
 export default Routes;
-

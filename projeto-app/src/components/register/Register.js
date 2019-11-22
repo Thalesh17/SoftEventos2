@@ -22,7 +22,7 @@ class Register extends Component {
       this.setState({ error: "Preencha todos os dados para se cadastrar" });
     } else {
       try {
-        await api.post("/users", { username, email, password });
+        await api.post("/User/Register", { username, email, password });
         this.props.history.push("/");
       } catch (err) {
         console.log(err);
