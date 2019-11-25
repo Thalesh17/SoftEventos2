@@ -9,12 +9,14 @@
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",
+    "react-datetime-picker": "^2.7.1",
     "react-dom": "^16.11.0",
     "react-reactive-form": "^1.0.32",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "react-toastify": "^5.4.1",
     "react-widgets": "^4.4.11",
+    "reactjs-toastr": "^1.1.0",
     "styled-components": "^4.4.1"
   },
   "scripts": {

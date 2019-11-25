@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Modal, Form, Row, Col, Nav }  from "react-bootstrap";
 import EventoService from "./../services/EventoService";
 import { withRouter } from "react-router-dom";
+import DateTimePicker from 'react-datetime-picker';
 
 class EditEvento extends Component {
 
@@ -31,7 +32,7 @@ class EditEvento extends Component {
     
 
     loadEvento() {
-        EventoService.fetchEventoById(window.localStorage.getItem("userId"))
+        EventoService.fetchEventoById(window.localStorage.getItem("eventoId"))
             .then((res) => {
                 let evento = res.data;
                 this.setState({
@@ -63,14 +64,10 @@ class EditEvento extends Component {
             Email: this.state.email
         };
 
-        EventoService.editEvento(evento)
-            .then(res => {
-                this.setState({message : 'Evento added successfully.'});
-                this.props.history.push('/eventos');
-            });
-
-            localStorage.removeItem("userId")
+        this.props.update(evento);
     }
+
+    onChange = date => this.setState({dataEvento: date })
 
     render() {
         const { salvando } = this.state;
@@ -94,6 +91,10 @@ class EditEvento extends Component {
                     <Row>
                         <Col>
                             <Form.Label>Data e Hora</Form.Label>
+                            <DateTimePicker
+                                onChange={this.onChange}
+                                value={this.state.dataEvento}
+                            />
                             <Form.Control name="dataEvento" value={this.state.dataEvento}  onChange={this.handleChange} placeholder="Data" />
                         </Col>
                         <Col>

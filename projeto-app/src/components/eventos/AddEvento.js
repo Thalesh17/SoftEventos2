@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import EventoService from "./../services/EventoService";
 import { Button, Modal, Form, Row, Col }  from "react-bootstrap";
+import DateTimePicker from 'react-datetime-picker';
 
 class AddEvento extends Component{
 
@@ -24,22 +25,19 @@ class AddEvento extends Component{
         let evento = {
             Tema: this.state.tema, 
             Local: this.state.local, 
-            DataEvento: this.state.dataEvento, 
+            DataEvento: new Date(this.state.dataEvento), 
             QtdPessoas: this.state.qtdPessoas,
             ImagemUrl: this.state.imagemUrl, 
             Telefone: this.state.telefone,
             Email: this.state.email
         };
-        EventoService.addEvento(evento)
-            .then(res => {
-                this.setState({message : 'Evento added successfully.'});
-                this.props.history.push('/eventos');
-            });
-
+        this.props.insert(evento);
     }
 
     handleChange = (e) =>
         this.setState({ [e.target.name]: e.target.value });
+    
+    onChange = date => this.setState({dataEvento: date })
 
     render() {
         const { evento, salvando } = this.state;
@@ -66,6 +64,10 @@ class AddEvento extends Component{
                         <Col>
                             <Form.Label>Data e Hora</Form.Label>
                             <Form.Control name="dataEvento" value={this.state.dataEvento}  onChange={this.handleChange} placeholder="Data" />
+                            <DateTimePicker
+                                onChange={this.onChange}
+                                value={this.state.dataEvento}
+                            />
                         </Col>
                         <Col>
                             <Form.Label>Qtd Pessoas</Form.Label>

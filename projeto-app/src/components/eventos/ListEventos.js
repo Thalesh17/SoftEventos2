@@ -4,6 +4,8 @@ import { Table, Button, Label, Form, Input, FormControl } from "react-bootstrap"
 import { Link, withRouter } from "react-router-dom";
 import EditEvento from './EditEvento';
 import AddEvento from './AddEvento';
+import { ToastContainer, toast } from 'react-toastify';    
+import 'react-toastify/dist/ReactToastify.css';   
 
 class ListEventos extends Component {
 
@@ -14,21 +16,18 @@ class ListEventos extends Component {
             eventos: [],
             showAdd: false,
             showEdit: false,
-            message: null
+            search: ''
         }
 
         this.deleteEvento = this.deleteEvento.bind(this);
         this.editEvento = this.editEvento.bind(this);
         this.addEvento = this.addEvento.bind(this);
         this.reloadUserList = this.reloadUserList.bind(this);
+        this.update = this.update.bind(this);
+        this.insert = this.insert.bind(this);
     }
 
     componentDidMount() {
-        this.reloadUserList();
-    }
-
-    componentWillReceiveProps(){
-        console.log("recebeu")
         this.reloadUserList();
     }
 
@@ -42,16 +41,53 @@ class ListEventos extends Component {
     deleteEvento(userId) {
         EventoService.deleteEvento(userId)
            .then(res => {
-               this.setState({message : 'User deleted successfully.'});
-               this.setState({users: this.state.users.filter(user => user.id !== userId)});
+               if(res.status == 200){
+                    this.setState({eventos: this.state.eventos.filter(user => user.id !== userId)});
+                    toast.success('Evento deletado com sucesso', 'Title', {displayDuration:2000})
+               }else{
+                    toast.error('Erro ao excluir o evento', 'Title', {displayDuration:2000})
+               }
            })
 
     }
 
     editEvento(id) {
-        window.localStorage.setItem("userId", id);
-        const {showEdit} = this.state;
-        this.setState({showEdit: !showEdit , showAdd: false});
+        window.localStorage.setItem("eventoId", id);
+        if(id == window.localStorage.getItem("eventoId"))
+        {
+            const {showEdit} = this.state;
+            this.setState({showEdit: !showEdit , showAdd: false});
+        }else{
+            this.setState({showEdit: true , showAdd: false});
+        }
+    }
+
+    insert(evento){
+        EventoService.addEvento(evento)
+        .then(res => {
+            if(res.status == 201){     
+                this.setState({showAdd: false});
+                toast.success('Evento criado com sucesso', 'Title', {displayDuration:2000});
+                this.reloadUserList();
+            }else{
+                toast.error('Erro ao editar o evento', 'Title', {displayDuration:2000})
+            }
+        });
+    }
+
+    update(evento){
+        EventoService.editEvento(evento)
+        .then(res => {
+            if(res.status == 201){     
+                this.setState({showEdit: false});
+                toast.success('Evento editado com sucesso', 'Title', {displayDuration:2000});
+                this.reloadUserList();
+            }else{
+                toast.error('Erro ao editar o evento', 'Title', {displayDuration:2000})
+            }
+        });
+
+        localStorage.removeItem("userId")
     }
 
     addEvento() {
@@ -60,14 +96,22 @@ class ListEventos extends Component {
         this.setState({showEdit: false , showAdd: !showAdd});
     }
 
+    updateSearch = (event) => this.setState({search: event.target.value.substr(0, 20)});
+
     render() {
         const {showAdd, showEdit} = this.state;
+        let filteredEventos = this.state.eventos.filter(
+            (evento) => {
+                return evento.tema.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1;
+            }
+        );
         return (
             <div>
+                <ToastContainer />
                 <div className="d-flex">
                     <div className="form-inline mr-auto">
                         <div className="form-group mb-2">
-                            <FormControl type="text" placeholder="Pesquisar" className="mr-sm-2" />
+                            <FormControl type="text" value={this.state.search} onChange={this.updateSearch.bind(this)} placeholder="Pesquisar" className="mr-sm-2" />
                         </div>
                     </div>
                     <div>
@@ -76,7 +120,7 @@ class ListEventos extends Component {
                     </div>
                 </div>
                 <h2 className="text-center">Evento Details</h2>
-                <Table striped bordered hover size="sm">
+                <Table striped bordered hover>
                 <thead>
                     <tr>
                     <th>#</th>
@@ -91,13 +135,13 @@ class ListEventos extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.state.eventos.map(evento => (
+                    {filteredEventos.map(evento => (
                         <tr key={evento.id}>
                             <td></td>    
                             <td><img src={evento.imagemUrl}></img></td>    
                             <td>{evento.tema}</td>  
                             <td>{evento.local}</td>    
-                            <td>{evento.dataEvento}</td>    
+                            <td>{new Date(evento.dataEvento).toLocaleDateString()}</td>    
                             <td>{evento.qtdPessoas}</td>    
                             <td>{evento.telefone}</td>    
                             <td>{evento.email}</td>    
@@ -117,8 +161,8 @@ class ListEventos extends Component {
                     }       
                 </tbody>
                 </Table>
-                {showEdit ? <EditEvento></EditEvento> : ''}
-                {showAdd  ? <AddEvento></AddEvento> : ''}
+                {showEdit ? <EditEvento update={this.update}></EditEvento> : ''}
+                {showAdd  ? <AddEvento insert={this.insert}></AddEvento> : ''}
             </div>
         );
     }
